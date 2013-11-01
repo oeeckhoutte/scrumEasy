@@ -1,0 +1,12 @@
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th data-ng-repeat="header in headerCells">{{header.name}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-ng-repeat="row in collection">
+            <td data-ng-repeat="item in collection">{{item}}</td>
+        </tr>
+    </tbody>
+</table>

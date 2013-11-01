@@ -1,0 +1,8 @@
+<form name="login" data-ng-controller="LoginController">
+    <label for="emailAddress">Email Address</label>
+    <input data-ng-model="credentials.username" name="username" type="text" id="emailAddress" />
+    <label for="password">Password</label>
+    <input data-ng-model="credentials.password" name="password" type="password" id="password" />
+
+    <input data-ng-click="processLogin(credentials)" type="button" value="Login" />
+</form>
