@@ -27,15 +27,15 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
-if ('development' == app.get('env')) {
+//if ('development' == app.get('env')) {
   app.use(express.errorHandler());
-}
+//}
 
 //set up the ORM
-require('./lib/orm').setup('/home/dave/sites/nodejs/scrumEasy/lib/models', "scrumEasy", "root", {
+require('./lib/orm').setup('/home/dave/sites/nodejs/scrumEasy/lib/models', "scrumEasy", "scrumEasy", "dodgy", {
     host: 'localhost',
     dialect: 'mysql'
-});
+}).sync();
 
 //set up the active controllers
 var controllerFiles = fs.readdirSync('controllers');
@@ -65,7 +65,7 @@ io.sockets.on('connection', function(socket) {
         'message': 'You are connected to the socket service for scrumEasy'
     });
 
-    socket.on('message', function(data) {
+    socket.on('message', function(data, fn) {
         console.log('Received message for route:', data.eventName);
         console.log(data);
 
@@ -75,6 +75,10 @@ io.sockets.on('connection', function(socket) {
         var action     = parts[1];
 
         //call the controller/action that we're routing to
-        activeControllers[controller][action](socket, data);
+        activeControllers[controller][action](data, {
+            send: fn
+        });
     });
 });
+
+io.sockets.on

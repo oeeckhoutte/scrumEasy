@@ -1,4 +1,4 @@
-require('../lib/orm');
+var orm = require('../lib/orm');
 
 module.exports = {
     identifier: 'user',
@@ -13,8 +13,8 @@ module.exports = {
         });
     },
 
-    checkCredentials: function(socket, data)
+    checkCredentials: function(reqeust, response)
     {
-        return socket.emit(User.count());
+        response.send({count: 5});
     }
 };

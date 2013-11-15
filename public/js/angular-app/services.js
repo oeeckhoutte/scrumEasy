@@ -1,5 +1,10 @@
 scrumEasy.factory('socket', function($rootScope) {
     var ioSocket = io.connect('http://localhost:3001');
+
+    ioSocket.on('debug', function(data) {
+        console.log('### DEBUG: ', data);
+    });
+
     var socket = {
         on: function (eventName, callback) {
             ioSocket.on('message', function() {
@@ -31,10 +36,6 @@ scrumEasy.factory('socket', function($rootScope) {
             });
         }
     };
-
-    socket.on('debug', function(data) {
-        console.log('### DEBUG: ', data);
-    });
 
     return socket;
 });
