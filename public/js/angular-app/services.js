@@ -34,37 +34,70 @@ scrumEasy.factory('socket', function($rootScope) {
                     }
                 });
             });
+        },
+        reconnect: function() {
+            Se.Log('Attempting to reconnect socket');
+            ioSocket = io.connect('http://localhost:3001');
+        },
+        connected: function() {
+            Se.Log('Socket is not connected');
+            return ioSocket.connected;
         }
     };
 
     return socket;
 });
 
-scrumEasy.factory('listing', ['socket', function(socket) {
-    return {
-        //connect grabs data over the socket for page initialisation,
-        //then subscribes to any future updates of the listing
-        connect: function(url, postData, callback) {
-            //combine the URL and any data
-            socket.emit(url, postData, callback);
+scrumEasy.factory('user', ['socket', function(socket) {
+    var _user;
 
-            //listen for events on the socket
-            socket.on('listing:update', function(data) {
-                //when an update is pushed from the server, update the listing
-                callback.apply(socket, data);
+    return {
+        credentialsAreValid: function(username, password, callback) {
+            var data = { username: username, password: password };
+            console.log('Checking credentials...');
+            socket.emit('user/checkCredentials', data, function(responseData) {
+                //TODO this response object stuff would probably sit better in the socket service
+                var responseObj = new Se.Response();
+                responseObj.setRawResponse(responseData);
+                callback(responseObj);
+            });
+        },
+        setCurrentUser: function(user) {
+            _user = user;
+        },
+        current: function() {
+            return _user;
+        },
+        logout: function(callback) {
+            socket.emit('user/logout', {}, function(responseData) {
+                if (callback) {
+                    callback(responseData);
+                }
             });
         }
     };
 }]);
 
-scrumEasy.factory('user', ['socket', function(socket) {
+scrumEasy.factory('dashboard', ['socket', function(socket) {
+
+    var _sprintId;
+
     return {
-        credentialsAreValid: function(username, password) {
-            var data = {username: username, password: password};
-            console.log('Checking credentials...');
-            socket.emit('user/checkCredentials', data, function(response) {
-                console.log(response);
+        getStories: function(callback) {
+            socket.emit('sprint/stories', { sprintId: _sprintId }, function(responseData) {
+                //TODO this response object stuff would probably sit better in the socket service
+                var responseObj = new Se.Response();
+                responseObj.setRawResponse(responseData);
+                callback(responseObj);
             });
+        },
+        setSprintId: function(sprintId) {
+            _sprintId = sprintId;
+        },
+        on: function(eventName, callback) {
+            //TODO add some code here so that the socket is subscribed to all dashboard broadcasts
+            socket.on(eventName, callback);
         }
     };
+
 }]);

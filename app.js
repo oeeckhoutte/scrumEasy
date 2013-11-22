@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //}
 
 //set up the ORM
-require('./lib/orm').setup('/home/dave/sites/nodejs/scrumEasy/lib/models', "scrumEasy", "scrumEasy", "dodgy", {
+require('./lib/orm').setup(path.join(__dirname, 'lib/models'), "scrumEasy", "scrumEasy", "dodgy", {
     host: 'localhost',
     dialect: 'mysql'
 }).sync();
@@ -75,10 +75,33 @@ io.sockets.on('connection', function(socket) {
         var action     = parts[1];
 
         //call the controller/action that we're routing to
-        activeControllers[controller][action](data, {
+        activeControllers[controller][action]({
+            param: function(name, defaultValue) {
+                if (data.hasOwnProperty(name)) {
+                    return data[name];
+                } else if (typeof defaultValue != 'undefined') {
+                    return defaultValue;;
+                }
+                return null;
+            },
+            params: function() {
+                return data;
+            },
+            socket: socket
+        }, {
+            ok: function(responseData) {
+                fn({
+                    status: 'ok',
+                    data: responseData
+                });
+            },
+            fail: function(responseData) {
+                fn({
+                    status: 'fail',
+                    data: responseData
+                });
+            },
             send: fn
         });
     });
 });
-
-io.sockets.on

@@ -1,0 +1,17 @@
+<div data-ng-include="'/partials/menu/standard.html'"></div>
+
+<h1>Sprint Dashboard</h1>
+
+<div id="dashboard">
+    <div class="story" data-ng-repeat="story in stories">
+        <div class="storyDetails">
+            <span class="storyName">{{story.name}}</span>
+        </div>
+        <div class="storyCos">
+            {{story.cos}}
+        </div>
+        <div class="task" data-ng-repeat="task in story.tasks">
+            {{task.title}} <span class="smallText">{{task.id}}</span>
+        </div>
+    </div>
+</div>

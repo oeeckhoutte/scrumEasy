@@ -1,4 +1,4 @@
-var scrumEasy = angular.module('scrumEasy', []);
+var scrumEasy = angular.module('scrumEasy', ['ngRoute']);
 
 //bootstrap the application
 scrumEasy.config(['$routeProvider', function($routeProvider) {
@@ -8,11 +8,17 @@ scrumEasy.config(['$routeProvider', function($routeProvider) {
             templateUrl: '/partials/controllers/index/login.html',
             controller: 'LoginController'
         })
-        .when('/listing/:modelName', {
-            templateUrl: '/partials/controllers/listing/listing.html',
-            controller: 'ListingController'
+        .when('/sprint/dashboard/:sprintId', {
+            templateUrl: '/partials/controllers/sprint/dashboard.html',
+            controller: 'SprintDashboardController'
         })
         .otherwise({
             redirectTo: '/'
         });
 }]);
+
+
+function _showError(error)
+{
+    alert(error);
+}
